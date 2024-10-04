@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const mailSender = require("../utils/mailSender");
 
 // Define the RatingAndReview schema
 const OtpSchema = new mongoose.Schema({
@@ -17,4 +18,22 @@ const OtpSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Otp", OtpSchema);
+
+//a fucntion to send email
+
+async function sendVerificationEmail(email,otp){
+  try{
+    const mailResponse=await mailSender(email,"verification Email",otp);
+    console.log("email sent successfully",mailResponse);
+  }
+  catch(e){
+    console.log("error in otp",e);
+    throw error;
+  }
+}
+// pre middileware
+OtpSchema.pre("save",async function(next){
+  await sendVerificationEmail(this.email,this.opt);
+})
+
+module.exports = mongoose.model("OTP", OtpSchema);

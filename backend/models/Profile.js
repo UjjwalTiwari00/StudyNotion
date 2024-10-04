@@ -1,6 +1,6 @@
 const mongoose=require('mongoose');
 
-const ProgileSchema=new mongoose.Schema({
+const ProfileSchema=new mongoose.Schema({
     gender:{
         type:String,
         enum:["Male","Female"]
@@ -19,4 +19,4 @@ const ProgileSchema=new mongoose.Schema({
 })
 
 
-module.exports=mongoose.model('Profile',ProgileSchema);
+module.exports=mongoose.model('Profile',ProfileSchema);
