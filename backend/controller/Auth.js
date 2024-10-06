@@ -36,7 +36,7 @@ exports.SignUp = async (req, res) => {
     if (password !== confirmPassword) {
       return res.status(402).json({
         success: false,
-        message: "password doesnot match confirmpassword",
+        message: "password does not match confirm password",
       });
     }
     // check the user exits or not
