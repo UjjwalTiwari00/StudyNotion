@@ -109,18 +109,57 @@ exports.showAllCourses = async (req, res) => {
         price: true,
         thumbnail: true,
         instructor: true,
-        ratingAndReviews:true,
+        ratingAndReviews: true,
         studentsEnrolled: true,
-        
       }
-    ).populate("instructor")
+    )
+      .populate("instructor")
+      .exec();
+
+    return res.status(200).json({
+      success: true,
+      message: "successfully fetched data",
+      data: allCourses,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "connot fetch course data",
+    });
+  }
+};
+
+exports.GetAllCourses = async (req, res) => {
+  try {
+    const { CourseID } = req.body();
+
+    const CourseDetail = await Course.findById({ _id: CourseID }).populate({path:"instructor",
+      populate:{
+        path:"additionalDetails",
+      },
+    })
+    .populate("category")
+    .populate("ratingAndReviews")
+    .populate({
+      path:"courseContent",
+      populate:{
+        path:"subSection"
+      }
+    })
     .exec();
 
+    // validation
+    if(!CourseDetail){
+      return res.status(400).json({
+        success:false,
+        message:"course deatial not found",
+      })
+    }
 
     return res.status(200).json({
       success: true,
       message: "successfully etched data",
-      data: allCourses,
     });
   } catch (error) {
     console.log(error);

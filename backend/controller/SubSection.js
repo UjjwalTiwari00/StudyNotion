@@ -62,6 +62,7 @@ exports.UpdateSubsection=async (req,res)=>{
               message: "all fields are required",
             });
           }
+
         const updateSubSection=await subSection.findByIdAndUpdate(subSectionId,{title,timeDuration,description},{new:true})
 
         
