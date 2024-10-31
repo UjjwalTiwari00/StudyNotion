@@ -7,14 +7,14 @@ const OtpSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  Otp: {
+  otp: {
     type: String,
     required: true,
   },
   CreatedAt: {
     type: Date,
    default:Date.now(),
-   expires:5*60,
+   expires:5*6000,
   },
 });
 
@@ -34,6 +34,7 @@ async function sendVerificationEmail(email,otp){
 // pre middileware
 OtpSchema.pre("save",async function(next){
   await sendVerificationEmail(this.email,this.opt);
+  next();
 })
 
 module.exports = mongoose.model("OTP", OtpSchema);

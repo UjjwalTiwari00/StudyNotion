@@ -74,7 +74,7 @@
     }
  }
 
- ecports.DeleteSection=async(req,res)=>{
+ exports.DeleteSection=async(req,res)=>{
     try{
         const {sectionId,courseId}=req.body;
         const sectionDelete=Section.findByIdAndDelete(sectionId);

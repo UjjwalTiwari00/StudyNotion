@@ -2,9 +2,11 @@ const bcrypt = require("bcrypt");
 // signup user
 const User = require("../models/User");
 const OTP = require("../models/Opt");
-const OtpGenerator = require("opt-generator");
+const OtpGenerator = require("otp-generator");
 const jwt = require("jsonwebtoken");
 require("dotenv").config;
+const mailSender=require('../utils/mailSender');
+const Profile=require('../models/Profile')
 
 exports.SignUp = async (req, res) => {
   try {
@@ -54,15 +56,15 @@ exports.SignUp = async (req, res) => {
     const recentOtp = await OTP.find({ email })
       .sort({ createdAt: -1 })
       .limit(1);
-    console.log(recentOtp);
+    console.log(recentOtp[0].otp);
     // validate otp
     if (recentOtp.length == 0) {
       return res.status(400).json({
         success: false,
         message: "otp not found",
       });
-    } else if (otp !== recentOtp.otp) {
-      return res.status(402).json({
+    } else if (otp !== recentOtp[0].otp) {
+      return res.status(400).json({
         success: false,
         message: "invalid otp",
       });
@@ -87,7 +89,7 @@ exports.SignUp = async (req, res) => {
       contactNumber: null,
     });
     // register the user
-    const RegisterUser = new User.create({
+    const RegisterUser = await User.create({
       firstName,
       lastName,
       password: HashPassword,
@@ -101,7 +103,6 @@ exports.SignUp = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      data: Registration,
     });
   } catch (error) {
     console.error("Server error:", error);
@@ -116,7 +117,7 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const userExist = await User.findOne({ email });
+    const userExist = await User.findOne({ email }).populate("additionalDetails");
 
     if (!userExist) {
       return res.status(400).json({
@@ -127,14 +128,15 @@ exports.loginUser = async (req, res) => {
 
     //ak payload banao
    
-    const payload = {
-      emsil: userExist.email,
-      id: userExist._id,
-      role: userExist.accountType,
-    };
-    if (await bcrypt.compare(password, User.password)) {
+    
+    if (await bcrypt.compare(password, userExist.password)) {
+      const payload = {
+        email: userExist.email,
+        id: userExist._id,
+        accountType: userExist.accountType,
+      };
       let token = jwt.sign(payload, process.env.JWT_SECRET, {
-        expiresIn: "2h",
+        expiresIn: "24h",
       });
 
       User.token = token;
@@ -175,7 +177,7 @@ exports.SendOtp = async (req, res) => {
         message: "User already exists",
       });
     }
-    var otp = OtpGenerator.genarate(6, {
+    var otp = OtpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
@@ -184,9 +186,9 @@ exports.SendOtp = async (req, res) => {
 
     // check unique otp or not
     const result = await OTP.findOne({ otp: otp });
-
+    console.log("result",result);
     while (result) {
-      otp = OtpGenerator.genarate(6, {
+      otp = OtpGenerator.generate(6, {
         upperCaseAlphabets: false,
         lowerCaseAlphabets: false,
         specialChars: false,
@@ -194,8 +196,9 @@ exports.SendOtp = async (req, res) => {
       result = await OTP.findOne({ otp: otp });
     }
     //create the entry for otp
-    const otpPayload = { email, otp };
+    const otpPayload = { email, otp:otp };
     const otpBody = await OTP.create(otpPayload);
+    const mail=mailSender()
     console.log(otpBody);
 
     res.status(200).json({

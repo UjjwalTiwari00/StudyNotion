@@ -2,7 +2,7 @@ const Category = require('../models/Category');
 
 const course=require('../models/Course');
 
-exports.CreateCategory=async (req,res)=>{
+exports.createCategories=async (req,res)=>{
     try{
         // fetch data
         const{name,description}=req.body;
@@ -30,7 +30,7 @@ exports.CreateCategory=async (req,res)=>{
         })
     }
 }
-exports.GetallCategory=async (res,req)=>{
+exports.getAllCategories=async (res,req)=>{
     try{
         // get all category 
         const CategoryDetails= await Category.find({},{name:true ,description:true})
@@ -47,4 +47,3 @@ exports.GetallCategory=async (res,req)=>{
         })
     }
 }
-exports.

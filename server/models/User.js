@@ -1,5 +1,4 @@
 const mongoose=require('mongoose');
-const { resetPassword } = require('../controller/ResetPassword');
 
 const UserSchema=new mongoose.Schema({
     firstName:{
@@ -56,4 +55,4 @@ const UserSchema=new mongoose.Schema({
     }
 })
 
-module.exports=mongoose.model('user',UserSchema);
+module.exports=mongoose.model('User',UserSchema);
