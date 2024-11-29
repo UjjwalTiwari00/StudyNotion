@@ -30,20 +30,23 @@ exports.createCategories=async (req,res)=>{
         })
     }
 }
-exports.getAllCategories=async (res,req)=>{
-    try{
-        // get all category 
-        const CategoryDetails= await Category.find({},{name:true ,description:true})
-        // return the response 
+exports.getAllCategories = async (req, res) => {
+    try {
+        // Fetch all categories, only name and description fields
+        const CategoryDetails = await Category.find({}, { name: true, description: true });
+
+        // Return the response
         return res.status(200).json({
-            message:"Categories fetched successfully",
-            success:true,
-            CategoryDetails
-        })
-    }catch(e){
+            message: "Categories fetched successfully",
+            success: true,
+            CategoryDetails,
+        });
+    } catch (e) {
         return res.status(500).json({
-            message:"Something went wrong",
-            success:false
-        })
+            message: "Something went wrong",
+            success: false,
+            error: e.message, // Optional: Include error message for debugging
+        });
     }
-}
+};
+

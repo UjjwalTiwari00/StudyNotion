@@ -1,12 +1,12 @@
 const mongoose=require('mongoose');
 
 const UserSchema=new mongoose.Schema({
-    firstName:{
+    firstname:{
         type:String,
         required:true,
         trim:true,
     },
-    lastName:{
+    lastname:{
         type:String,
         required:true,
         trim:true,

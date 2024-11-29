@@ -3,7 +3,7 @@ const router=express.Router();
 
 const{
     loginUser,
-    SignUp,
+    signup,
     SendOtp,
     changePassword ,
 }=require("../controller/Auth")
@@ -19,17 +19,13 @@ const {
 router.post("/login", loginUser)
 
 // Route for user signup
-router.post("/signup", SignUp)
+router.post("/signup", signup)
 
 // Route for sending OTP to the user's email
 router.post("/sendotp", SendOtp)
 
 // Route for Changing the password
 router.post("/changepassword", auth, changePassword)
-
-// 
-//                                      Reset Password
-// 
 
 // Route for generating a reset password token
 router.post("/reset-password-token", resetPasswordToken)
